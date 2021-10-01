@@ -15,7 +15,7 @@ class piece
             piece(std::string, char, int, int);
             ~piece();
             char getSide();
-            std::string getPiece();
+            std::string getPieceType();
             int getX();
             int getY();
             void setX(int);

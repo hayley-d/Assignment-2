@@ -18,30 +18,47 @@ board::board(std::string pieceList)
     int ypos;
     int count = 0;
     int countpos = 0;
+    bool flag = false;
+    int indexw = 0;
+    int indexb = 0;
+    piece *white [20];
+    piece *black [20];
+    chessboard[8][8];
+    //whitePieces = new Piece*[];
     
     std::ifstream infile;
     infile.open(pieceList.c_str());
     while(getline(infile,line))
     {
+        std::cout<<line<<std::endl;
         std::stringstream s(line);
         if(count == 0)
         {
+            //works
             movingSide = line[0];
         }
         else if(count==1)
         {
+            //works
             move = line;
         }//end else
+        
         else
         {
+            countpos = 0;
+            flag = false;
             while(getline(s,num,','))
             {
+                std::cout<<num<<std::endl;
                 if(countpos == 0)
                 {
+                    //works
                     side = num[0];
+                    std::cout<<side<<std::endl;
                 }
                 else if(countpos == 1)
                 {
+                    std::cout<<"The type is  "<<num<<std::endl;
                     type = num;
                 }
                 else if(countpos == 2)
@@ -51,15 +68,126 @@ board::board(std::string pieceList)
                 }
                 else if(countpos == 3)
                 {
-                    std::stringstream pos(num);
-                    pos >> ypos;
+                    std::stringstream pos1(num);
+                    pos1 >> ypos;
+                    flag = true;
+                }
+                if (flag)
+                {
+                    if(side == 'w')
+                    {
+                        white[indexw] = new piece(type,side,xpos,ypos);
+                        indexw++;
+                        std::cout<< "new white piece"<<std::endl;
+                    }
+                    else if(side == 'b')
+                    {
+                        black[indexb] = new piece(type,side,xpos,ypos);
+                        indexb++;
+                        std::cout<< "new black piece"<<std::endl;
+                    } 
+                    flag = false; 
                 }
                 countpos++;
+                
             }//end while
         }//end else
         count++;
+        
     }
-    
+    numBlackPieces = indexb;
+    numWhitePieces = indexw;
+    //std::cout<<"here"<<std::endl;
+    infile.close();
+    //std::cout<<"here"<<std::endl;
+    blackPieces = new piece* [numBlackPieces];
+    whitePieces = new piece* [numWhitePieces];
+    //std::cout<<"here"<<std::endl;
+    for(int i = 0; i < numBlackPieces; i++)
+    {
+        blackPieces[i] = black[i];
+        //std::cout<<"here"<<std::endl;
+        int x = black[i]->getX();
+        int y = black[i]->getY();
+        std::string side;
+        std::stringstream charc;
+        charc << black[i]->getSide();
+        charc >> side;
+        //std::cout<<"here"<<std::endl;
+        std::string wholetype = black[i]->getPieceType();
+        std::string type;
+        if(wholetype == "king")
+        {
+            type = "K";
+        }
+        else if(wholetype == "knight")
+        {
+            type = "k";
+        }
+        else if(wholetype == "rook")
+        {
+            type = "r";
+        }
+        else if(wholetype == "pawn")
+        {
+            type = "p";
+        }
+        else if(wholetype == "bishop")
+        {
+            type = "b";
+        }
+        else if(wholetype == "queen")
+        {
+            type = "q";
+        }
+        //std::cout<<"here"<<std::endl;
+        side = side+type;
+        //std::cout<<side<<std::endl;
+        chessboard[x][y] = side;//seg fault
+        std::cout<<"here"<<std::endl;
+    }
+    for(int i = 0; i < numWhitePieces; i++)
+    {
+        whitePieces[i] = white[i];
+       
+        int x = white[i]->getX();
+        int y = white[i]->getY();
+        std::string side;
+        std::stringstream charc;
+        charc << white[i]->getSide();
+        charc >> side;
+        std::string wholetype = white[i]->getPieceType();
+        std::string type;
+        if(wholetype == "king")
+        {
+            type = "K";
+        }
+        else if(wholetype == "knight")
+        {
+            type = "k";
+        }
+        else if(wholetype == "rook")
+        {
+            type = "r";
+        }
+        else if(wholetype == "pawn")
+        {
+            type = "p";
+        }
+        else if(wholetype == "bishop")
+        {
+            type = "b";
+        }
+        else if(wholetype == "queen")
+        {
+            type = "q";
+        }
+        side = side+type;
+        std::cout<<side<<std::endl;
+        chessboard[x][y] = side;
+        
+    }
+    std::cout<<"end"<<std::endl;
 }
 
 board::~board()
@@ -161,16 +289,23 @@ board& board::operator--()
         {
             std::stringstream ss(line);
             ss >> posX;
+            //std::cout<<posX<<std::endl;
         } 
         else if(counter == 3)
         {
             std::stringstream ss(line);
             ss >> posY;
+            //std::cout<<posY<<std::endl;
         } 
-        counter++;  
+        counter++; 
+       // std::cout<<"got here"<<std::endl; 
     }
+    
+    std::cout<<chessboard[posX][posY]<<std::endl;
     std::string thePiece = chessboard[posX][posY];
+    std::cout<<"got here"<<std::endl;
     char colour = thePiece[0];
+    std::cout<<"got here"<<std::endl;
     piece* moved;
     piece* king;
 
@@ -181,13 +316,15 @@ board& board::operator--()
             if(whitePieces[i]->getX() == posX && whitePieces[i]->getY() == posY)
             {
                moved = whitePieces[i];
+               std::cout<<"got here"<<std::endl;
             }  
         }//end for piece
         for(int i = 0; i < numBlackPieces; i++)
         {
-            if(blackPieces[i]->getPiece() == "king")
+            if(blackPieces[i]->getPieceType() == "king")
             {
                king = blackPieces[i];
+                std::cout<<"got here"<<std::endl;
             }
         }//end for king
     }//end if
@@ -203,7 +340,7 @@ board& board::operator--()
         }//end for piece
         for(int i = 0; i < numWhitePieces; i++)
         {
-            if(whitePieces[i]->getPiece() == "king")
+            if(whitePieces[i]->getPieceType() == "king")
             {
                king = whitePieces[i];
             }

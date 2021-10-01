@@ -10,7 +10,7 @@ piece::piece()
 
 piece::piece(piece* newPiece)
 {
-    this->pieceType = newPiece->getPiece();
+    this->pieceType = newPiece->getPieceType();
     this->side = newPiece->getSide();
     this->xPos = newPiece->getX();
     this->yPos = newPiece->getY();
@@ -34,7 +34,7 @@ char piece::getSide()
     return side;
 }
 
-std::string piece::getPiece()
+std::string piece::getPieceType()
 {
     return pieceType;
 }
@@ -62,7 +62,7 @@ void piece::setY(int y)
 std::ostream& operator<<(std::ostream& output,const piece& t)
 {
     piece &ref = const_cast <piece&>(t);
-    output<<ref.getSide()<<" "<<ref.getPiece()<<" at ["<<ref.getX()<<","<<ref.getY()<<"]"<<std::endl;
+    output<<ref.getSide()<<" "<<ref.getPieceType()<<" at ["<<ref.getX()<<","<<ref.getY()<<"]"<<std::endl;
     return output;
 }
 

@@ -1,14 +1,50 @@
-chess: piece.o main.o
-    g++ -std=c++98 -static piece.o main.o -o chess
+ 
 
-piece.o: piece.cpp piece.h
-    g++ -c -std=c++98 -static piece.cpp
+# target: prerequisite 1 prerequisite 2 prerequisite 3
 
-main.o: main.cpp piece.h
-    g++ -c -std=c++98 -static main.cpp
+#<TAB>shell command(s)
 
-run: chess
-	./chess
+ 
+
+prac: main.o piece.o board.o
+
+       g++ -o prac main.o piece.o board.o
+
+ 
+
+main.o: main.cpp
+
+       g++ -c main.cpp
+
+ 
+
+ 
+
+piece.o: piece.cpp
+
+       g++ -c piece.cpp
+
+ 
+
+ 
+
+board.o: board.cpp
+
+       g++ -c board.cpp
+ 
+
+ 
 
 clean:
-    rm *.o chess
+
+       @echo "Start afresh.."
+
+       rm -rfv *.o prac
+
+ 
+
+ 
+
+run:
+
+       ./prac
