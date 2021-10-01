@@ -23,14 +23,18 @@ board::board(std::string pieceList)
     int indexb = 0;
     piece *white [20];
     piece *black [20];
-    chessboard[8][8];
+    chessboard = new std::string* [8];
+    for(int i = 0; i < 8; i++)
+    {
+        chessboard[i] = new std::string[8];
+    }
     //whitePieces = new Piece*[];
     
     std::ifstream infile;
     infile.open(pieceList.c_str());
     while(getline(infile,line))
     {
-        std::cout<<line<<std::endl;
+        //std::cout<<line<<std::endl;
         std::stringstream s(line);
         if(count == 0)
         {
@@ -49,16 +53,16 @@ board::board(std::string pieceList)
             flag = false;
             while(getline(s,num,','))
             {
-                std::cout<<num<<std::endl;
+                //std::cout<<num<<std::endl;
                 if(countpos == 0)
                 {
                     //works
                     side = num[0];
-                    std::cout<<side<<std::endl;
+                    //std::cout<<side<<std::endl;
                 }
                 else if(countpos == 1)
                 {
-                    std::cout<<"The type is  "<<num<<std::endl;
+                    //std::cout<<"The type is  "<<num<<std::endl;
                     type = num;
                 }
                 else if(countpos == 2)
@@ -78,13 +82,13 @@ board::board(std::string pieceList)
                     {
                         white[indexw] = new piece(type,side,xpos,ypos);
                         indexw++;
-                        std::cout<< "new white piece"<<std::endl;
+                        //std::cout<< "new white piece"<<std::endl;
                     }
                     else if(side == 'b')
                     {
                         black[indexb] = new piece(type,side,xpos,ypos);
                         indexb++;
-                        std::cout<< "new black piece"<<std::endl;
+                        //std::cout<< "new black piece"<<std::endl;
                     } 
                     flag = false; 
                 }
@@ -143,8 +147,10 @@ board::board(std::string pieceList)
         //std::cout<<"here"<<std::endl;
         side = side+type;
         //std::cout<<side<<std::endl;
+        //std::cout<<x<<y<<std::endl;
+        //std::cout<<chessboard[0][0]<<std::endl;
         chessboard[x][y] = side;//seg fault
-        std::cout<<"here"<<std::endl;
+        //std::cout<<"here"<<std::endl;
     }
     for(int i = 0; i < numWhitePieces; i++)
     {
@@ -183,11 +189,18 @@ board::board(std::string pieceList)
             type = "q";
         }
         side = side+type;
-        std::cout<<side<<std::endl;
+        //std::cout<<side<<std::endl;
         chessboard[x][y] = side;
         
     }
-    std::cout<<"end"<<std::endl;
+    for(int row = 0; row < 8; row++)
+    {
+        for(int col = 0; col < 8; col++)
+        {
+            if(chessboard[row][col].empty())
+                chessboard[row][col] = "-";
+        }
+    }
 }
 
 board::~board()
@@ -277,6 +290,7 @@ board& board::operator++()
 
 board& board::operator--()
 {
+    this->operator++();
     std::string output;
     std::stringstream s(move);
     int counter = 0;
@@ -298,25 +312,28 @@ board& board::operator--()
             //std::cout<<posY<<std::endl;
         } 
         counter++; 
-       // std::cout<<"got here"<<std::endl; 
     }
     
-    std::cout<<chessboard[posX][posY]<<std::endl;
+    //std::cout<<chessboard[posX][posY]<<std::endl;
     std::string thePiece = chessboard[posX][posY];
-    std::cout<<"got here"<<std::endl;
+    //std::cout<<thePiece<<std::endl;
+    //std::cout<<"got here"<<std::endl;
     char colour = thePiece[0];
-    std::cout<<"got here"<<std::endl;
+    //std::cout<<colour<<std::endl;
     piece* moved;
     piece* king;
-
+    //std::cout<<numWhitePieces<<std::endl;
     if(colour == 'w')
     {
+        //std::cout<<"here before"<<std::endl;
         for(int i = 0; i < numWhitePieces; i++)
         {
+            //std::cout<<"here before"<<std::endl;
             if(whitePieces[i]->getX() == posX && whitePieces[i]->getY() == posY)
             {
+                
                moved = whitePieces[i];
-               std::cout<<"got here"<<std::endl;
+               //std::cout<<"got here"<<std::endl;
             }  
         }//end for piece
         for(int i = 0; i < numBlackPieces; i++)
@@ -324,7 +341,7 @@ board& board::operator--()
             if(blackPieces[i]->getPieceType() == "king")
             {
                king = blackPieces[i];
-                std::cout<<"got here"<<std::endl;
+                //std::cout<<"got here"<<std::endl;
             }
         }//end for king
     }//end if
@@ -377,7 +394,14 @@ board& board::operator--()
         int wayOut = 0;
         if(x1<=7 && x1>=0 && y1<=7 && y1>=0)
         {
-            flag = checkIfPieceHasCheck(thePiece,posX,posY,x1,y1);
+            if(chessboard[x1][y1] != "-")
+            {
+                flag = true;
+            }
+            else if(checkIfPieceHasCheck(thePiece,posX,posY,x1,y1))
+            {
+                flag = true;
+            }
             if(flag == false)
             {
                 wayOut++;
@@ -386,7 +410,14 @@ board& board::operator--()
         }
         if(x2<=7 && x2>=0 && y2<=7 && y2>=0)
         {
-            flag = checkIfPieceHasCheck(thePiece,posX,posY,x2,y2);
+            if(chessboard[x2][y2] != "-")
+            {
+                flag = true;
+            }
+            else if(checkIfPieceHasCheck(thePiece,posX,posY,x2,y2))
+            {
+                flag = true;
+            }
             if(flag == false)
             {
                 wayOut++;
@@ -395,7 +426,14 @@ board& board::operator--()
         }
         if(x3<=7 && x3>=0 && y3<=7 && y3>=0)
         {
-            flag = checkIfPieceHasCheck(thePiece,posX,posY,x3,y3);
+            if(chessboard[x3][y3] != "-")
+            {
+                flag = true;
+            }
+            else if(checkIfPieceHasCheck(thePiece,posX,posY,x3,y3))
+            {
+                flag = true;
+            }
             if(flag == false)
             {
                 wayOut++;
@@ -404,7 +442,14 @@ board& board::operator--()
         }
         if(x4<=7 && x4>=0 && y4<=7 && y4>=0)
         {
-            flag = checkIfPieceHasCheck(thePiece,posX,posY,x4,y4);
+            if(chessboard[x4][y4] != "-")
+            {
+                flag = true;
+            }
+            else if(checkIfPieceHasCheck(thePiece,posX,posY,x4,y4))
+            {
+                flag = true;
+            }
             if(flag == false)
             {
                 wayOut++;
@@ -413,7 +458,14 @@ board& board::operator--()
         }
         if(x5<=7 && x5>=0 && y5<=7 && y5>=0)
         {
-            flag = checkIfPieceHasCheck(thePiece,posX,posY,x5,y5);
+            if(chessboard[x5][y5] != "-")
+            {
+                flag = true;
+            }
+            else if(checkIfPieceHasCheck(thePiece,posX,posY,x5,y5))
+            {
+                flag = true;
+            }
             if(flag == false)
             {
                 wayOut++;
@@ -422,7 +474,14 @@ board& board::operator--()
         }
         if(x6<=7 && x6>=0 && y6<=7 && y6>=0)
         {
-            flag = checkIfPieceHasCheck(thePiece,posX,posY,x6,y6);
+            if(chessboard[x6][y6] != "-")
+            {
+                flag = true;
+            }
+            else if(checkIfPieceHasCheck(thePiece,posX,posY,x6,y6))
+            {
+                flag = true;
+            }
             if(flag == false)
             {
                 wayOut++;
@@ -431,7 +490,14 @@ board& board::operator--()
         }
         if(x7<=7 && x7>=0 && y7<=7 && y7>=0)
         {
-            flag = checkIfPieceHasCheck(thePiece,posX,posY,x7,y7);
+            if(chessboard[x7][y7] != "-")
+            {
+                flag = true;
+            }
+            else if(checkIfPieceHasCheck(thePiece,posX,posY,x7,y7))
+            {
+                flag = true;
+            }
             if(flag == false)
             {
                 wayOut++;
@@ -440,7 +506,14 @@ board& board::operator--()
         }
         if(x8<=7 && x8>=0 && y8<=7 && y8>=0)
         {
-            flag = checkIfPieceHasCheck(thePiece,posX,posY,x8,y8);
+            if(chessboard[x8][y8] != "-")
+            {
+                flag = true;
+            }
+            else if(checkIfPieceHasCheck(thePiece,posX,posY,x8,y8))
+            {
+                flag = true;
+            }
             if(flag == false)
             {
                 wayOut++;
@@ -453,12 +526,12 @@ board& board::operator--()
         }
         else if( wayOut != 0 )
         {
-            std::cout<<"Failed: No Checkmate of "<< kingColour<<" King"<<std::endl ;
+            std::cout<<"Failed: No Checkmate of "<< kingColour<<" King "<<std::endl ;
         }
     }//end if
     if(check == false)//need to add if just a check not a checkmate
     {
-        std::cout<<"Failed: No Checkmate of "<<kingColour<<" King" ;
+        std::cout<<"Failed: No Checkmate of "<<kingColour<<" King"<<std::endl ;
         
     }//end else 
     return *this;  
@@ -496,21 +569,40 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
     {
         if(colour=='w')
         {
-            int x1 = xPos-1;
+            //std::cout<<colour<<std::endl;
+            /*int x1 = xPos-1;
             int x2 = xPos-1;
+            std::cout<<"x 1: "<<x1<<" x2: "<<x2<<std::endl;
             int y1 = yPos-1;
+            
             int y2 = yPos+1;
+            std::cout<<"y 1: "<<y1<<" y2: "<<y2<<std::endl;
             if(kingX == x1 && kingY == y1)
             {
+              //std::cout<<x1<<y1<<std::endl;
               check = true;  
             }
             if(kingX == x2 && kingY == y2)
             {
+                //std::cout<<x2<<y2<<std::endl;
+               check = true;
+            }*/
+            //int xdiff = kingX-xPos;
+            int x1 = abs(kingX-xPos);
+            //int ydiff = kingY-yPos;
+            int y1 = abs(kingY-yPos);
+            std::cout<<"p1: "<<x1<<"p1: "<<y1<<std::endl;
+            
+            if(x1==1 && y1 == 1)
+            {
                 check = true;
             }
+            int xp = kingX+1;
+            int yp = kingY;
+            
         }//end if
 
-        if(colour=='b')
+        else if(colour=='b')
         {
             int x1 = xPos+1;
             int x2 = xPos+1;

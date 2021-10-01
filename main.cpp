@@ -10,6 +10,7 @@ int main ()
     std::cout<<p.getSide()<<" "<<j.getSide()<<std::endl;*/
     board b("game1.txt");//works
     //std::cout<<"here"<<std::endl;
+    //b--;
     board &c = b.operator--();
     return 0;
 }
