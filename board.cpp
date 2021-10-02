@@ -144,14 +144,10 @@ board::board(std::string pieceList)
         {
             type = "q";
         }
-        //std::cout<<"here"<<std::endl;
         side = side+type;
-        //std::cout<<side<<std::endl;
-        //std::cout<<x<<y<<std::endl;
-        //std::cout<<chessboard[0][0]<<std::endl;
         chessboard[x][y] = side;//seg fault
-        //std::cout<<"here"<<std::endl;
     }
+    
     for(int i = 0; i < numWhitePieces; i++)
     {
         whitePieces[i] = white[i];
@@ -313,35 +309,25 @@ board& board::operator--()
         } 
         counter++; 
     }
-    
-    //std::cout<<chessboard[posX][posY]<<std::endl;
     std::string thePiece = chessboard[posX][posY];
-    //std::cout<<thePiece<<std::endl;
-    //std::cout<<"got here"<<std::endl;
     char colour = thePiece[0];
-    //std::cout<<colour<<std::endl;
     piece* moved;
     piece* king;
-    //std::cout<<numWhitePieces<<std::endl;
     if(colour == 'w')
     {
-        //std::cout<<"here before"<<std::endl;
         for(int i = 0; i < numWhitePieces; i++)
         {
-            //std::cout<<"here before"<<std::endl;
             if(whitePieces[i]->getX() == posX && whitePieces[i]->getY() == posY)
             {
-                
                moved = whitePieces[i];
-               //std::cout<<"got here"<<std::endl;
             }  
         }//end for piece
+        
         for(int i = 0; i < numBlackPieces; i++)
         {
             if(blackPieces[i]->getPieceType() == "king")
             {
                king = blackPieces[i];
-                //std::cout<<"got here"<<std::endl;
             }
         }//end for king
     }//end if
@@ -522,7 +508,7 @@ board& board::operator--()
         }
         if(wayOut == 0)
         {
-            std::cout<<"Success: Checkmate of "<<kingColour<<" King at ["<<kingX<<","+kingY<<"]"<<std::endl;
+            std::cout<<"Success: Checkmate of "<<kingColour<<" King at ["<<kingX<<","<<kingY<<"]"<<std::endl;
         }
         else if( wayOut != 0 )
         {
@@ -567,57 +553,17 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
     
     if(type == 'p')
     {
-        if(colour=='w')
-        {
-            //std::cout<<colour<<std::endl;
-            /*int x1 = xPos-1;
-            int x2 = xPos-1;
-            std::cout<<"x 1: "<<x1<<" x2: "<<x2<<std::endl;
-            int y1 = yPos-1;
+        
             
-            int y2 = yPos+1;
-            std::cout<<"y 1: "<<y1<<" y2: "<<y2<<std::endl;
-            if(kingX == x1 && kingY == y1)
-            {
-              //std::cout<<x1<<y1<<std::endl;
-              check = true;  
-            }
-            if(kingX == x2 && kingY == y2)
-            {
-                //std::cout<<x2<<y2<<std::endl;
-               check = true;
-            }*/
-            //int xdiff = kingX-xPos;
-            int x1 = abs(kingX-xPos);
-            //int ydiff = kingY-yPos;
+            int x1 = abs(kingX-xPos);   
             int y1 = abs(kingY-yPos);
-            std::cout<<"p1: "<<x1<<"p1: "<<y1<<std::endl;
-            
             if(x1==1 && y1 == 1)
             {
                 check = true;
             }
             int xp = kingX+1;
             int yp = kingY;
-            
-        }//end if
-
-        else if(colour=='b')
-        {
-            int x1 = xPos+1;
-            int x2 = xPos+1;
-            int y1 = yPos-1;
-            int y2 = yPos+1;
-            if(kingX == x1 && kingY == y1)
-            {
-              check = true;  
-            }
-            if(kingX == x2 && kingY == y2)
-            {
-              check = true;
-            }
-        }//end if
-    }//end p if
+    }//end pawn if
 
     else if(type == 'q')
     {
@@ -625,18 +571,17 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
         int col = yPos;
         int max = col;
         int min = kingY;
-
-       
+        bool typeOfMove = false;
         if(kingY > col)
         {
             max = kingY;
             min = col;
         }//end if
-        
-        if(colour == 'w')
+        if(typeOfMove == false)
         {
             if(kingX == row)
             {
+                
                 bool flag = false;
                 for(int i = 0; i < numWhitePieces; i++)
                 {
@@ -645,13 +590,23 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
                         flag = true;
                     }
                 }//end for
+                for(int i = 0; i < numBlackPieces; i++)
+                {
+                    if(blackPieces[i]->getX()==row && blackPieces[i]->getY()<max && blackPieces[i]->getY() > min)
+                    {
+                        flag = true;
+                    }
+                }//end for
+                
                 if(flag == false)
-                    check = true;
-                    
+                {
+                    check = true; 
+                }
             }//end if
 
-            else if(kingY = col)
+            else if(kingY == col)
             {
+                
                 if(kingX > row)
                 {
                     max = kingX;
@@ -665,36 +620,6 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
                         flag = true;
                     }
                 }//end for
-                if(flag == false)
-                    check = true;
-            }//end else
-             
-        }//end if  
-        else if(colour == 'b')
-        {
-            if(kingX == row)
-            {
-                bool flag = false;
-                for(int i = 0; i < numBlackPieces; i++)
-                {
-                    if(blackPieces[i]->getX()==row && blackPieces[i]->getY()<max && blackPieces[i]->getY() > min)
-                    {
-                        flag = true;
-                    }
-                }//end for
-                if(flag == false)
-                    check = true;
-                    
-            }//end if
-
-            else if(kingY = col)
-            {
-                if(kingX > row)
-                {
-                    max = kingX;
-                    min = row;
-                }//end if
-                bool flag = false;
                 for(int i = 0; i < numBlackPieces; i++)
                 {
                     if(blackPieces[i]->getY()==col && blackPieces[i]->getX()<max && blackPieces[i]->getX() > min)
@@ -704,9 +629,11 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
                 }//end for
                 if(flag == false)
                     check = true;
-            }//end else
-             
-        }//end if 
+            }//end else 
+            typeOfMove = true;
+        }
+        if(typeOfMove == false)
+        {
         bool tile = false;//balck is true
         int value = xPos%2;
         int value2 = yPos%2;
@@ -737,19 +664,21 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
         }
         else if(kingmodx==0 && kingmody != 0)//if king on black but bishop on white
         {
-            if(tile == false)
+            if(tile == true)
             {
-                check = false;
+                check = true;
             }
         }
         else if(kingmodx!=0 && kingmody == 0)
         {
-            if(tile == false)
+            if(tile == true)
             {
-                check = false;
+                check = true;
             }
         }
-        
+        }
+        if(typeOfMove==false)
+        {
         int xArr [50];//stores avaliable tiles
         int yArr [50];//stores available tiles
         
@@ -814,6 +743,7 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
             if(inWay == false)
             {
                 check = true;
+            }
             }   
     }//end queen if
 
@@ -873,8 +803,12 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
     {
         int row = xPos;
         int col = yPos;
+        
+        
         int max = col;
         int min = kingY;
+        
+        bool alwayst = true;
 
        
         if(kingY > col)
@@ -883,8 +817,6 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
             min = col;
         }//end if
         
-        if(colour == 'w')
-        {
             if(kingX == row)
             {
                 bool flag = false;
@@ -892,15 +824,26 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
                 {
                     if(whitePieces[i]->getX()==row && whitePieces[i]->getY()<max && whitePieces[i]->getY() > min)
                     {
+                        std::cout<<"the blocking piece is "<< whitePieces[i]->getX()<< whitePieces[i]->getY()<< std::endl;
                         flag = true;
                     }
                 }//end for
+                for(int i = 0; i < numBlackPieces; i++)
+                {
+                    if(blackPieces[i]->getX()==row && blackPieces[i]->getY()<max && blackPieces[i]->getY() > min)
+                    {
+                        std::cout<<"the blocking piece is "<< whitePieces[i]->getX()<< whitePieces[i]->getY()<< std::endl;
+                        flag = true;
+                    }
+                }//end for
+                
                 if(flag == false)
-                    check = true;
-                    
+                {
+                    check = true; 
+                }
             }//end if
 
-            else if(kingY = col)
+            else if(kingY == col)
             {
                 if(kingX > row)
                 {
@@ -915,36 +858,6 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
                         flag = true;
                     }
                 }//end for
-                if(flag == false)
-                    check = true;
-            }//end else
-             
-        }//end if  
-        else if(colour == 'b')
-        {
-            if(kingX == row)
-            {
-                bool flag = false;
-                for(int i = 0; i < numBlackPieces; i++)
-                {
-                    if(blackPieces[i]->getX()==row && blackPieces[i]->getY()<max && blackPieces[i]->getY() > min)
-                    {
-                        flag = true;
-                    }
-                }//end for
-                if(flag == false)
-                    check = true;
-                    
-            }//end if
-
-            else if(kingY = col)
-            {
-                if(kingX > row)
-                {
-                    max = kingX;
-                    min = row;
-                }//end if
-                bool flag = false;
                 for(int i = 0; i < numBlackPieces; i++)
                 {
                     if(blackPieces[i]->getY()==col && blackPieces[i]->getX()<max && blackPieces[i]->getX() > min)
@@ -954,9 +867,8 @@ bool board::checkIfPieceHasCheck(std::string pieceType,int xPos,int yPos,int kin
                 }//end for
                 if(flag == false)
                     check = true;
-            }//end else
-             
-        }//end if     
+            }//end else  
+                
     }//end r if
 
     else if(type == 'b')
